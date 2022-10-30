@@ -2,6 +2,7 @@ package cz.cvut.fit.tjv.hospital_appointments.business;
 
 import cz.cvut.fit.tjv.hospital_appointments.dao.DoctorJpaRepository;
 import cz.cvut.fit.tjv.hospital_appointments.domain.Doctor;
+import cz.cvut.fit.tjv.hospital_appointments.exception.EntityNotFoundException;
 import org.springframework.stereotype.Service;
 
 @Service

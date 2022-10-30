@@ -1,5 +1,7 @@
 package cz.cvut.fit.tjv.hospital_appointments.api.dto;
 
+import com.fasterxml.jackson.annotation.JsonView;
+import cz.cvut.fit.tjv.hospital_appointments.api.views.AppointmentViews;
 import lombok.*;
 
 import java.time.LocalDateTime;
@@ -12,8 +14,10 @@ import java.time.LocalDateTime;
 @Builder
 public class AppointmentDto {
 
-    // todo - annotation maybe
+    @JsonView(AppointmentViews.FullDataWithId.class)
     private Long id;
+    @JsonView(AppointmentViews.FullDataWithoutId.class)
     private LocalDateTime from;
+    @JsonView(AppointmentViews.FullDataWithoutId.class)
     private LocalDateTime to;
 }

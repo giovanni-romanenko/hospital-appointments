@@ -1,13 +1,15 @@
 package cz.cvut.fit.tjv.hospital_appointments.domain;
 
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import javax.persistence.*;
 import java.io.Serializable;
 import java.time.LocalDateTime;
 
-@Data
+@Getter
+@Setter
+@EqualsAndHashCode
+@ToString
 @NoArgsConstructor
 @Entity
 public class Appointment implements Serializable {
