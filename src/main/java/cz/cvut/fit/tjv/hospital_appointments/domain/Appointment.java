@@ -18,9 +18,9 @@ public class Appointment implements Serializable {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
     @Column(nullable = false)
-    private LocalDateTime from;
+    private LocalDateTime fromTime;
     @Column(nullable = false)
-    private LocalDateTime to;
+    private LocalDateTime toTime;
 
     @OneToOne
     @JoinColumn(name = "patient_case_fk")
@@ -29,9 +29,9 @@ public class Appointment implements Serializable {
     @JoinColumn(name = "doctor_fk")
     private Doctor doctor;
 
-    public Appointment(Long id, LocalDateTime from, LocalDateTime to) {
+    public Appointment(Long id, LocalDateTime fromTime, LocalDateTime toTime) {
         this.id = id;
-        this.from = from;
-        this.to = to;
+        this.fromTime = fromTime;
+        this.toTime = toTime;
     }
 }

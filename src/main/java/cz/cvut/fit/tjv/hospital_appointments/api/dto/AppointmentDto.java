@@ -17,7 +17,7 @@ public class AppointmentDto {
     @JsonView(AppointmentViews.FullDataWithId.class)
     private Long id;
     @JsonView(AppointmentViews.FullDataWithoutId.class)
-    private LocalDateTime from;
+    private LocalDateTime fromTime;
     @JsonView(AppointmentViews.FullDataWithoutId.class)
-    private LocalDateTime to;
+    private LocalDateTime toTime;
 }

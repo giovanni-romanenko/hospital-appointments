@@ -1,14 +1,20 @@
 package cz.cvut.fit.tjv.hospital_appointments.api.controller;
 
 import com.fasterxml.jackson.annotation.JsonView;
+import cz.cvut.fit.tjv.hospital_appointments.api.converter.AppointmentConverter;
+import cz.cvut.fit.tjv.hospital_appointments.api.converter.PatientCaseConverter;
+import cz.cvut.fit.tjv.hospital_appointments.api.dto.AppointmentDto;
 import cz.cvut.fit.tjv.hospital_appointments.api.dto.DoctorDto;
+import cz.cvut.fit.tjv.hospital_appointments.api.dto.PatientCaseDto;
+import cz.cvut.fit.tjv.hospital_appointments.api.views.AppointmentViews;
 import cz.cvut.fit.tjv.hospital_appointments.api.views.DoctorViews;
+import cz.cvut.fit.tjv.hospital_appointments.api.views.PatientCaseViews;
 import cz.cvut.fit.tjv.hospital_appointments.business.DoctorService;
 import cz.cvut.fit.tjv.hospital_appointments.domain.Doctor;
 import cz.cvut.fit.tjv.hospital_appointments.exception.CreatedEntityNullIdException;
+import cz.cvut.fit.tjv.hospital_appointments.exception.EntityNotFoundException;
 import org.springframework.web.bind.annotation.*;
 
-import javax.persistence.EntityNotFoundException;
 import java.util.Collection;
 
 import static cz.cvut.fit.tjv.hospital_appointments.api.converter.DoctorConverter.*;
@@ -60,5 +66,32 @@ public class DoctorController {
     @DeleteMapping("/doctors/{id}")
     public void deleteById(@PathVariable Long id) {
         doctorService.deleteById(id);
+    }
+
+    @JsonView(AppointmentViews.FullDataWithId.class)
+    @GetMapping("/doctors/{id}/appointments")
+    public Collection<AppointmentDto> readAllAppointmentsOfDoctor(@PathVariable Long id) {
+        return AppointmentConverter.toDtoMany(doctorService.readAllAppointmentsOfDoctor(id));
+    }
+
+    @PutMapping("/doctors/{docId}/appointments/{appId}") // todo - return value Response (different return code?)
+    public void updateAppointmentForDoctor(@PathVariable Long docId, @PathVariable Long appId) {
+        doctorService.updateAppointmentForDoctor(docId, appId);
+    }
+
+    @JsonView(PatientCaseViews.FullDataWithId.class)
+    @GetMapping("/doctors/{id}/patient_cases")
+    public Collection<PatientCaseDto> readAllPatientCasesTreatableByDoctor(@PathVariable Long id) {
+        return PatientCaseConverter.toDtoMany(doctorService.readAllPatientCasesTreatableByDoctor(id));
+    }
+
+    @PutMapping("/doctors/{docId}/patient_cases/{caseId}")
+    public void updateDoctorCanTreatPatientCase(@PathVariable Long docId, @PathVariable Long caseId) {
+        doctorService.updateDoctorCanTreatPatientCase(docId, caseId);
+    }
+
+    @DeleteMapping("/doctors/{docId}/patient_cases/{caseId}")
+    public void deleteDoctorCanTreatPatientCase(@PathVariable Long docId, @PathVariable Long caseId) {
+        doctorService.deleteDoctorCanTreatPatientCase(docId, caseId);
     }
 }

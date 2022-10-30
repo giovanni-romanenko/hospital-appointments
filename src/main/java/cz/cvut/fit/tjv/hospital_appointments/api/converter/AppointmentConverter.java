@@ -9,14 +9,14 @@ import java.util.stream.Collectors;
 public class AppointmentConverter {
 
     public static Appointment fromDto(AppointmentDto dto) {
-        return new Appointment(dto.getId(), dto.getFrom(), dto.getTo());
+        return new Appointment(dto.getId(), dto.getFromTime(), dto.getToTime());
     }
 
     public static AppointmentDto toDto(Appointment appointment) {
         return AppointmentDto.builder()
                 .id(appointment.getId())
-                .from(appointment.getFrom())
-                .to(appointment.getTo())
+                .fromTime(appointment.getFromTime())
+                .toTime(appointment.getToTime())
                 .build();
     }
 

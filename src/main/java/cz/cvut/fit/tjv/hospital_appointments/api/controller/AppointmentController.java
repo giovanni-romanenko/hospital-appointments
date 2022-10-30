@@ -1,14 +1,18 @@
 package cz.cvut.fit.tjv.hospital_appointments.api.controller;
 
 import com.fasterxml.jackson.annotation.JsonView;
+import cz.cvut.fit.tjv.hospital_appointments.api.converter.DoctorConverter;
+import cz.cvut.fit.tjv.hospital_appointments.api.converter.PatientCaseConverter;
 import cz.cvut.fit.tjv.hospital_appointments.api.dto.AppointmentDto;
+import cz.cvut.fit.tjv.hospital_appointments.api.dto.DoctorDto;
+import cz.cvut.fit.tjv.hospital_appointments.api.dto.PatientCaseDto;
 import cz.cvut.fit.tjv.hospital_appointments.api.views.AppointmentViews;
 import cz.cvut.fit.tjv.hospital_appointments.business.AppointmentService;
 import cz.cvut.fit.tjv.hospital_appointments.domain.Appointment;
 import cz.cvut.fit.tjv.hospital_appointments.exception.CreatedEntityNullIdException;
+import cz.cvut.fit.tjv.hospital_appointments.exception.EntityNotFoundException;
 import org.springframework.web.bind.annotation.*;
 
-import javax.persistence.EntityNotFoundException;
 import java.util.Collection;
 
 import static cz.cvut.fit.tjv.hospital_appointments.api.converter.AppointmentConverter.*;
@@ -60,5 +64,26 @@ public class AppointmentController {
     @DeleteMapping("/appointments/{id}")
     public void deleteById(@PathVariable Long id) {
         appointmentService.deleteById(id);
+    }
+
+    @GetMapping("/appointments/{id}/doctors") // todo - JsonView
+    public DoctorDto readDoctorOfAppointment(@PathVariable Long id) {
+        Appointment appointment = appointmentService.readById(id).orElseThrow(EntityNotFoundException::new);
+        if (appointment.getDoctor() == null)
+            return null; // todo - change return value to Response class and return different status code here
+        return DoctorConverter.toDto(appointment.getDoctor());
+    }
+
+    @DeleteMapping("/appointments/{id}/doctors")
+    public void deleteDoctorOfAppointment(@PathVariable Long id) {
+        appointmentService.deleteDoctorOfAppointment(id);
+    }
+
+    @GetMapping("/appointments/{id}/patient_cases") // todo - JsonView
+    public PatientCaseDto readPatientCaseOfAppointment(@PathVariable Long id) {
+        Appointment appointment = appointmentService.readById(id).orElseThrow(EntityNotFoundException::new);
+        if (appointment.getPatientCase() == null)
+            return null; // todo - change return value to Response class and return different status code here
+        return PatientCaseConverter.toDto(appointment.getPatientCase());
     }
 }
