@@ -1,5 +1,6 @@
 package cz.cvut.fit.tjv.hospital_appointments.business;
 
+import cz.cvut.fit.tjv.hospital_appointments.exception.DeletingNonExistingEntityException;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -53,6 +54,9 @@ public abstract class AbstractCrudService<K, E, R extends JpaRepository<E, K>> {
 
     @Transactional
     public void deleteById(K id) {
+        if (!repository.existsById(id)) {
+            throw new DeletingNonExistingEntityException();
+        }
         repository.deleteById(id);
     }
 }

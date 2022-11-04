@@ -1,6 +1,7 @@
 package cz.cvut.fit.tjv.hospital_appointments.api.exception;
 
 import cz.cvut.fit.tjv.hospital_appointments.exception.CreatedEntityNullIdException;
+import cz.cvut.fit.tjv.hospital_appointments.exception.DeletingNonExistingEntityException;
 import cz.cvut.fit.tjv.hospital_appointments.exception.EntityNotFoundException;
 import cz.cvut.fit.tjv.hospital_appointments.exception.OneToOneRelationUpdateConflictException;
 import org.springframework.http.HttpHeaders;
@@ -31,5 +32,10 @@ public class RestExceptionHandler extends ResponseEntityExceptionHandler {
     protected ResponseEntity<Object> handleOneToOneRelationUpdateConflict(Exception e, WebRequest r) {
         String bodyOfResponse = "One of One-to-One relation entities is already in relation with another entity";
         return handleExceptionInternal(e, bodyOfResponse, new HttpHeaders(), CONFLICT, r);
+    }
+
+    @ExceptionHandler(DeletingNonExistingEntityException.class)
+    protected ResponseEntity<Object> handleDeletingNonExistingEntity(Exception e, WebRequest r) {
+        return handleExceptionInternal(e, null, new HttpHeaders(), NO_CONTENT, r);
     }
 }

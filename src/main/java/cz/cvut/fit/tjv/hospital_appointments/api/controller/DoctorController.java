@@ -18,6 +18,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.Collection;
 
 import static cz.cvut.fit.tjv.hospital_appointments.api.converter.DoctorConverter.*;
+import static org.springframework.http.HttpStatus.NO_CONTENT;
 
 @RestController
 public class DoctorController {
@@ -64,6 +65,7 @@ public class DoctorController {
     }
 
     @DeleteMapping("/doctors/{id}")
+    @ResponseStatus(NO_CONTENT)
     public void deleteById(@PathVariable Long id) {
         doctorService.deleteById(id);
     }

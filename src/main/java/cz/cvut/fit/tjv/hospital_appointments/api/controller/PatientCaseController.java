@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.Collection;
 
 import static cz.cvut.fit.tjv.hospital_appointments.api.converter.PatientCaseConverter.*;
+import static org.springframework.http.HttpStatus.NO_CONTENT;
 
 @RestController
 public class PatientCaseController {
@@ -63,6 +64,7 @@ public class PatientCaseController {
     }
 
     @DeleteMapping("/patient_cases/{id}")
+    @ResponseStatus(NO_CONTENT)
     public void deleteById(@PathVariable Long id) {
         patientCaseService.deleteById(id);
     }

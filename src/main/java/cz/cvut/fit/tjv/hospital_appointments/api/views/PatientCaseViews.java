@@ -5,6 +5,6 @@ public class PatientCaseViews {
     public static class FullDataWithoutId {
     }
 
-    public static class FullDataWithId extends AppointmentViews.FullDataWithoutId {
+    public static class FullDataWithId extends FullDataWithoutId {
     }
 }
