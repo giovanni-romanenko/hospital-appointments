@@ -10,6 +10,9 @@ print:
   script:
     - echo "$CI_REGISTRY_IMAGE"
     - echo "$CI_COMMIT_REF_NAME"
+  artifacts:
+    paths:
+      - output.txt
 
 # build, run tests
 #build-gradle-17:
