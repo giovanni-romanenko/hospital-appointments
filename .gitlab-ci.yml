@@ -1,6 +1,7 @@
 stages:
   - build
   - deploy
+  - third
 
 #variables:
 #  IMAGE_NAME: "$CI_REGISTRY_IMAGE:$CI_COMMIT_REF_NAME"
@@ -14,6 +15,11 @@ print:
 print-again:
   stage: deploy
   allow_failure: false
+  script:
+    - exit 1
+
+print-again-2:
+  stage: third
   script:
     - exit 1
 
