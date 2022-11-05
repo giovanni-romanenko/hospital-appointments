@@ -8,7 +8,7 @@ stages:
 print:
   stage: build
   script:
-    - exit 1
+    - exit 0
 
 # build, run tests
 #build-gradle-17:
