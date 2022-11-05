@@ -8,8 +8,8 @@ stages:
 print:
   stage: build
   script:
-    - echo "$CI_REGISTRY_IMAGE"
-    - echo "$CI_COMMIT_REF_NAME"
+    - echo "$CI_REGISTRY_IMAGE" > output.txt
+    - echo "$CI_COMMIT_REF_NAME" >> output.txt
   artifacts:
     paths:
       - output.txt
