@@ -1,0 +1,57 @@
+stages:
+  - build
+  - deploy
+
+variables:
+  IMAGE_NAME: "$CI_REGISTRY_IMAGE:$CI_COMMIT_REF_NAME"
+
+build-gradle-17: # build, run tests
+  stage: build
+  except:
+    - java-syntax
+    - pre-DI
+    - DI-manual
+  image: amazoncorretto:17-alpine
+  #      services:
+  #          - postgres:alpine
+  #      variables:
+  #          POSTGRES_PASSWORD: fitpass
+  #          SPRING_DATASOURCE_URL: jdbc:postgresql://postgres/postgres
+  #          SPRING_DATASOURCE_USERNAME: postgres
+  #          SPRING_DATASOURCE_PASSWORD: fitpass
+  script:
+    - ./gradlew build
+    - rm -f build/libs/*-plain.jar
+    - java -Dspring.main.web-application-type=none -jar build/libs/*.jar
+  #    artifacts:
+  #        paths:
+  #            - build/libs/*.jar
+  #
+
+docker image: # build docker image locally
+  image: docker
+  stage: build
+  only:
+    - deploy
+  services:
+    - docker:dind
+  before_script:
+    - docker login -u "$CI_REGISTRY_USER" -p "$CI_REGISTRY_PASSWORD" $CI_REGISTRY
+  script:
+    - docker build -t "$IMAGE_NAME" .
+    - docker push "$IMAGE_NAME"
+
+#deploy image: # deploy docker image to docker hub?
+#  image: debian:buster
+#  stage: deploy
+#  only:
+#    - deploy
+#  before_script:
+#    - apt-get update
+#    - apt-get install -y openssh-client sshpass
+#    - echo "fittjvdeployer" > pass.txt
+#  script:
+#    - sshpass -f pass.txt ssh -oStrictHostKeyChecking=no deployer@46.101.137.140 sudo /opt/deploy-script.sh "$CI_PROJECT_NAMESPACE" "$CI_REGISTRY_USER" "$CI_REGISTRY_PASSWORD" "$CI_REGISTRY" "$IMAGE_NAME"
+#
+  # USE THIS?
+#  docker push romaniv1/hospital-appointments-image:tagname
