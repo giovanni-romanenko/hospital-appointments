@@ -8,11 +8,7 @@ stages:
 print:
   stage: build
   script:
-    - echo "$CI_REGISTRY_IMAGE" > output.txt
-    - echo "$CI_COMMIT_REF_NAME" >> output.txt
-  artifacts:
-    paths:
-      - output.txt
+    - exit 1
 
 # build, run tests
 #build-gradle-17:
