@@ -1,73 +1,10 @@
 stages:
   - build
-  - deploy
-  - third
-
-#variables:
-#  IMAGE_NAME: "$CI_REGISTRY_IMAGE:$CI_COMMIT_REF_NAME"
-
-print:
-  stage: build
-  allow_failure: true
-  script:
-    - exit 1
-
-print-again:
-  stage: deploy
-  allow_failure: false
-  script:
-    - exit 1
-
-print-again-2:
-  stage: third
-  script:
-    - exit 1
 
 # build, run tests
-#build-gradle-17:
-#  stage: build
-#  except:
-#    - java-syntax
-#    - pre-DI
-#    - DI-manual
-#  image: amazoncorretto:17-alpine
-#  #      services:
-#  #          - postgres:alpine
-#  #      variables:
-#  #          POSTGRES_PASSWORD: fitpass
-#  #          SPRING_DATASOURCE_URL: jdbc:postgresql://postgres/postgres
-#  #          SPRING_DATASOURCE_USERNAME: postgres
-#  #          SPRING_DATASOURCE_PASSWORD: fitpass
-#  script:
-#    - ./gradlew build
-#    - rm -f build/libs/*-plain.jar
-#    - java -Dspring.main.web-application-type=none -jar build/libs/*.jar
-#  #    artifacts:
-#  #        paths:
-#  #            - build/libs/*.jar
-#  #
-#
-## build docker image locally
-#docker image:
-#  image: docker
-#  stage: build
-#  only:
-#    - deploy
-#  services:
-#    - docker:dind
-#  before_script:
-#    - docker login -u "$CI_REGISTRY_USER" -p "$CI_REGISTRY_PASSWORD" $CI_REGISTRY
-#  script:
-#    - docker build -t "$IMAGE_NAME" .
-#    - docker push "$IMAGE_NAME"
-#
-## deploy docker image to docker hub
-#deploy image:
-#  image: docker
-#  stage: deploy
-#  only:
-#    refs:
-#      - master
-#
-#  script:
-#    - docker push romaniv1/hospital-appointments-image:tagname # todo - tagname and creds for auth
+build-gradle-17:
+  stage: build
+  script:
+    - ./gradlew build
+    - rm -f build/libs/*-plain.jar
+    - java -Dspring.main.web-application-type=none -jar build/libs/*.jar
