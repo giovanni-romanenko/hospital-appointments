@@ -57,6 +57,9 @@ public abstract class AbstractCrudService<K, E, R extends JpaRepository<E, K>> {
         if (!repository.existsById(id)) {
             throw new DeletingNonExistingEntityException();
         }
+        deleteRelationsById(id);
         repository.deleteById(id);
     }
+
+    protected void deleteRelationsById(K id) {}
 }

@@ -6,6 +6,7 @@ import cz.cvut.fit.tjv.hospital_appointments.api.converter.DoctorConverter;
 import cz.cvut.fit.tjv.hospital_appointments.api.dto.AppointmentDto;
 import cz.cvut.fit.tjv.hospital_appointments.api.dto.DoctorDto;
 import cz.cvut.fit.tjv.hospital_appointments.api.dto.PatientCaseDto;
+import cz.cvut.fit.tjv.hospital_appointments.api.views.AppointmentViews;
 import cz.cvut.fit.tjv.hospital_appointments.api.views.DoctorViews;
 import cz.cvut.fit.tjv.hospital_appointments.api.views.PatientCaseViews;
 import cz.cvut.fit.tjv.hospital_appointments.business.PatientCaseService;
@@ -75,20 +76,24 @@ public class PatientCaseController {
         return DoctorConverter.toDtoMany(patientCaseService.readAllDoctorsWhoCanWorkOnPatientCase(id));
     }
 
-    @GetMapping("/patient_cases/{id}/appointments") // todo - JsonView
+    @JsonView(AppointmentViews.FullDataWithId.class)
+    @GetMapping("/patient_cases/{id}/appointments")
     public AppointmentDto readAppointmentOfPatientCase(@PathVariable Long id) {
         PatientCase patientCase = patientCaseService.readById(id).orElseThrow(EntityNotFoundException::new);
-        if (patientCase.getAppointment() == null)
-            return null; // todo - change return value to Response class and return different status code here
+        if (patientCase.getAppointment() == null) {
+            return null;
+        }
         return AppointmentConverter.toDto(patientCase.getAppointment());
     }
 
     @PutMapping("/patient_cases/{caseId}/appointments/{appId}")
+    @ResponseStatus(NO_CONTENT)
     public void updateAppointmentOfPatientCase(@PathVariable Long caseId, @PathVariable Long appId) {
         patientCaseService.updateAppointmentOfPatientCase(caseId, appId);
     }
 
     @DeleteMapping("/patient_cases/{caseId}/appointments/{appId}")
+    @ResponseStatus(NO_CONTENT)
     public void deleteAppointmentOfPatientCase(@PathVariable Long caseId, @PathVariable Long appId) {
         patientCaseService.deleteAppointmentOfPatientCase(caseId, appId);
     }

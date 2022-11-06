@@ -4,6 +4,7 @@ import cz.cvut.fit.tjv.hospital_appointments.dao.PatientCaseJpaRepository;
 import cz.cvut.fit.tjv.hospital_appointments.domain.Appointment;
 import cz.cvut.fit.tjv.hospital_appointments.domain.Doctor;
 import cz.cvut.fit.tjv.hospital_appointments.domain.PatientCase;
+import cz.cvut.fit.tjv.hospital_appointments.exception.DeletingNonExistingEntityException;
 import cz.cvut.fit.tjv.hospital_appointments.exception.EntityNotFoundException;
 import cz.cvut.fit.tjv.hospital_appointments.exception.OneToOneRelationUpdateConflictException;
 import lombok.NonNull;
@@ -24,11 +25,19 @@ public class PatientCaseService extends
     }
 
     @Override
-    public PatientCase update(PatientCase doctor) {
-        if (repository.existsById(doctor.getId())) {
-            return repository.save(doctor);
+    public PatientCase update(PatientCase patientCase) {
+        PatientCase existingPatientCase = readById(patientCase.getId()).orElseThrow(EntityNotFoundException::new);
+        patientCase.setQualifiedDoctors(existingPatientCase.getQualifiedDoctors());
+        return repository.save(patientCase);
+    }
+
+    @Override
+    protected void deleteRelationsById(Long id) {
+        PatientCase patientCase = readById(id).orElseThrow(DeletingNonExistingEntityException::new);
+        Appointment appointment = patientCase.getAppointment();
+        if (appointment != null) {
+            appointment.setPatientCase(null);
         }
-        throw new EntityNotFoundException(doctor);
     }
 
     @Transactional
@@ -42,7 +51,7 @@ public class PatientCaseService extends
         PatientCase patientCase = readById(caseId).orElseThrow(EntityNotFoundException::new);
         Appointment appointment = appointmentService.readById(appId).orElseThrow(EntityNotFoundException::new);
         if (patientCase.getAppointment() == null && appointment.getPatientCase() == null) {
-            patientCase.setAppointment(appointment);
+            appointment.setPatientCase(patientCase);
         }
         else if (!(appointment.equals(patientCase.getAppointment()) && patientCase.equals(appointment.getPatientCase()))) {
             throw new OneToOneRelationUpdateConflictException();
@@ -55,7 +64,6 @@ public class PatientCaseService extends
         Appointment appointment = appointmentService.readById(appId).orElseThrow(EntityNotFoundException::new);
         if (appointment.equals(patientCase.getAppointment()) && patientCase.equals(appointment.getPatientCase())) {
             appointment.setPatientCase(null);
-            patientCase.setAppointment(null);
         }
     }
 }

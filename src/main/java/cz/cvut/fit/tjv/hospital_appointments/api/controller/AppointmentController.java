@@ -7,6 +7,8 @@ import cz.cvut.fit.tjv.hospital_appointments.api.dto.AppointmentDto;
 import cz.cvut.fit.tjv.hospital_appointments.api.dto.DoctorDto;
 import cz.cvut.fit.tjv.hospital_appointments.api.dto.PatientCaseDto;
 import cz.cvut.fit.tjv.hospital_appointments.api.views.AppointmentViews;
+import cz.cvut.fit.tjv.hospital_appointments.api.views.DoctorViews;
+import cz.cvut.fit.tjv.hospital_appointments.api.views.PatientCaseViews;
 import cz.cvut.fit.tjv.hospital_appointments.business.AppointmentService;
 import cz.cvut.fit.tjv.hospital_appointments.domain.Appointment;
 import cz.cvut.fit.tjv.hospital_appointments.exception.CreatedEntityNullIdException;
@@ -68,24 +70,29 @@ public class AppointmentController {
         appointmentService.deleteById(id);
     }
 
-    @GetMapping("/appointments/{id}/doctors") // todo - JsonView
+    @JsonView(DoctorViews.FullDataWithId.class)
+    @GetMapping("/appointments/{id}/doctors")
     public DoctorDto readDoctorOfAppointment(@PathVariable Long id) {
         Appointment appointment = appointmentService.readById(id).orElseThrow(EntityNotFoundException::new);
-        if (appointment.getDoctor() == null)
-            return null; // todo - change return value to Response class and return different status code here
+        if (appointment.getDoctor() == null) {
+            return null;
+        }
         return DoctorConverter.toDto(appointment.getDoctor());
     }
 
     @DeleteMapping("/appointments/{id}/doctors")
+    @ResponseStatus(NO_CONTENT)
     public void deleteDoctorOfAppointment(@PathVariable Long id) {
         appointmentService.deleteDoctorOfAppointment(id);
     }
 
-    @GetMapping("/appointments/{id}/patient_cases") // todo - JsonView
+    @JsonView(PatientCaseViews.FullDataWithId.class)
+    @GetMapping("/appointments/{id}/patient_cases")
     public PatientCaseDto readPatientCaseOfAppointment(@PathVariable Long id) {
         Appointment appointment = appointmentService.readById(id).orElseThrow(EntityNotFoundException::new);
-        if (appointment.getPatientCase() == null)
-            return null; // todo - change return value to Response class and return different status code here
+        if (appointment.getPatientCase() == null) {
+            return null;
+        }
         return PatientCaseConverter.toDto(appointment.getPatientCase());
     }
 }

@@ -17,10 +17,10 @@ public class AppointmentService extends
 
     @Override
     public Appointment update(Appointment appointment) {
-        if (repository.existsById(appointment.getId())) {
-            return repository.save(appointment);
-        }
-        throw new EntityNotFoundException(appointment);
+        Appointment existingAppointment = readById(appointment.getId()).orElseThrow(EntityNotFoundException::new);
+        appointment.setDoctor(existingAppointment.getDoctor());
+        appointment.setPatientCase(existingAppointment.getPatientCase());
+        return repository.save(appointment);
     }
 
     @Transactional

@@ -76,7 +76,8 @@ public class DoctorController {
         return AppointmentConverter.toDtoMany(doctorService.readAllAppointmentsOfDoctor(id));
     }
 
-    @PutMapping("/doctors/{docId}/appointments/{appId}") // todo - return value Response (different return code?)
+    @PutMapping("/doctors/{docId}/appointments/{appId}") // todo - refactor this put into appointment controller
+    @ResponseStatus(NO_CONTENT)
     public void updateAppointmentForDoctor(@PathVariable Long docId, @PathVariable Long appId) {
         doctorService.updateAppointmentForDoctor(docId, appId);
     }
@@ -88,11 +89,13 @@ public class DoctorController {
     }
 
     @PutMapping("/doctors/{docId}/patient_cases/{caseId}")
+    @ResponseStatus(NO_CONTENT)
     public void updateDoctorCanTreatPatientCase(@PathVariable Long docId, @PathVariable Long caseId) {
         doctorService.updateDoctorCanTreatPatientCase(docId, caseId);
     }
 
     @DeleteMapping("/doctors/{docId}/patient_cases/{caseId}")
+    @ResponseStatus(NO_CONTENT)
     public void deleteDoctorCanTreatPatientCase(@PathVariable Long docId, @PathVariable Long caseId) {
         doctorService.deleteDoctorCanTreatPatientCase(docId, caseId);
     }
