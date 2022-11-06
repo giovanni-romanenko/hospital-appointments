@@ -1,11 +1,9 @@
 stages:
   - build
 
-# build, run tests
+# compile, run tests
 build-gradle-17:
   stage: build
   image: amazoncorretto:17
   script:
     - ./gradlew build
-    - rm -f build/libs/*-plain.jar
-    - java -Dspring.main.web-application-type=none -jar build/libs/*.jar
