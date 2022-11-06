@@ -4,6 +4,7 @@ stages:
 # build, run tests
 build-gradle-17:
   stage: build
+  image: amazoncorretto:17
   script:
     - ./gradlew build
     - rm -f build/libs/*-plain.jar
