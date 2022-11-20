@@ -31,8 +31,14 @@ public abstract class AbstractCrudService<K, E, R extends JpaRepository<E, K>> {
      */
     @Transactional
     public E create(E entity) {
+        checkNonNullableValues(entity);
+        checkEntityIntegrityConstraints(entity);
         return repository.save(entity);
     }
+
+    protected void checkNonNullableValues(E entity) {}
+
+    protected void checkEntityIntegrityConstraints(E entity) {}
 
     @Transactional
     public Optional<E> readById(K id) {

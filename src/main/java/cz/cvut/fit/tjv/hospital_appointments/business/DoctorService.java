@@ -5,12 +5,15 @@ import cz.cvut.fit.tjv.hospital_appointments.domain.Appointment;
 import cz.cvut.fit.tjv.hospital_appointments.domain.Doctor;
 import cz.cvut.fit.tjv.hospital_appointments.domain.PatientCase;
 import cz.cvut.fit.tjv.hospital_appointments.exception.DeletingNonExistingEntityException;
+import cz.cvut.fit.tjv.hospital_appointments.exception.DoctorAppointmentPatientCaseException;
 import cz.cvut.fit.tjv.hospital_appointments.exception.EntityNotFoundException;
+import cz.cvut.fit.tjv.hospital_appointments.exception.TimeIntervalsAreIntersectingException;
 import lombok.NonNull;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Collection;
+import java.util.Set;
 
 @Service
 public class DoctorService extends
@@ -28,6 +31,7 @@ public class DoctorService extends
 
     @Override
     public Doctor update(Doctor doctor) {
+        checkNonNullableValues(doctor);
         readById(doctor.getId()).orElseThrow(EntityNotFoundException::new);
         return repository.save(doctor);
     }
@@ -43,7 +47,9 @@ public class DoctorService extends
     public void updateAppointmentForDoctor(@NonNull Long docId, @NonNull Long appId) {
         Doctor doctor = readById(docId).orElseThrow(EntityNotFoundException::new);
         Appointment appointment = appointmentService.readById(appId).orElseThrow(EntityNotFoundException::new);
+        checkDoctorAppointmentsTimesAreNotIntersecting(doctor, appointment);
         appointment.setDoctor(doctor);
+        checkDoctorsOnlyHaveAppointmentsForPatientCasesWhichTheyCanWorkOn();
     }
 
     @Transactional
@@ -70,5 +76,25 @@ public class DoctorService extends
         Doctor doctor = readById(docId).orElseThrow(EntityNotFoundException::new);
         PatientCase patientCase = patientCaseService.readById(caseId).orElseThrow(EntityNotFoundException::new);
         patientCase.getQualifiedDoctors().remove(doctor);
+        checkDoctorsOnlyHaveAppointmentsForPatientCasesWhichTheyCanWorkOn();
+    }
+
+    private void checkDoctorAppointmentsTimesAreNotIntersecting(Doctor doctor, Appointment appointment) {
+        if (doctor.getAppointments().contains(appointment)) {
+            return ;
+        }
+        Set<Appointment> doctorAppointments = doctor.getAppointments();
+        doctorAppointments.forEach(doctorAppointment -> {
+            if (appointment.getToTime().isAfter(doctorAppointment.getFromTime())
+                    && doctorAppointment.getToTime().isAfter(appointment.getFromTime())) {
+                throw new TimeIntervalsAreIntersectingException();
+            }
+        });
+    }
+
+    void checkDoctorsOnlyHaveAppointmentsForPatientCasesWhichTheyCanWorkOn() {
+        if (!repository.findAllDoctorsWhoHaveAppointmentsWithPatientCasesThatTheyCanNotWorkOn().isEmpty()) {
+            throw new DoctorAppointmentPatientCaseException();
+        }
     }
 }

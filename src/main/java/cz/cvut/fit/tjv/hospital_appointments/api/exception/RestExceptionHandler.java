@@ -1,9 +1,6 @@
 package cz.cvut.fit.tjv.hospital_appointments.api.exception;
 
-import cz.cvut.fit.tjv.hospital_appointments.exception.CreatedEntityNullIdException;
-import cz.cvut.fit.tjv.hospital_appointments.exception.DeletingNonExistingEntityException;
-import cz.cvut.fit.tjv.hospital_appointments.exception.EntityNotFoundException;
-import cz.cvut.fit.tjv.hospital_appointments.exception.OneToOneRelationUpdateConflictException;
+import cz.cvut.fit.tjv.hospital_appointments.exception.*;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ControllerAdvice;
@@ -37,5 +34,29 @@ public class RestExceptionHandler extends ResponseEntityExceptionHandler {
     @ExceptionHandler(DeletingNonExistingEntityException.class)
     protected ResponseEntity<Object> handleDeletingNonExistingEntity(Exception e, WebRequest r) {
         return handleExceptionInternal(e, null, new HttpHeaders(), NO_CONTENT, r);
+    }
+
+    @ExceptionHandler(NonNullableFieldIsNullException.class)
+    protected ResponseEntity<Object> handleNonNullableFieldIsNull(Exception e, WebRequest r) {
+        String bodyOfResponse = "Non-Nullable field of entity can not be null";
+        return handleExceptionInternal(e, bodyOfResponse, new HttpHeaders(), UNPROCESSABLE_ENTITY, r);
+    }
+
+    @ExceptionHandler(EndTimeBeforeStartTimeException.class)
+    protected ResponseEntity<Object> handleEndTimeIsBeforeStartTime(Exception e, WebRequest r) {
+        String bodyOfResponse = "End time must be after start time";
+        return handleExceptionInternal(e, bodyOfResponse, new HttpHeaders(), UNPROCESSABLE_ENTITY, r);
+    }
+
+    @ExceptionHandler(DoctorAppointmentPatientCaseException.class)
+    protected ResponseEntity<Object> handleDoctorAppointmentPatientCase(Exception e, WebRequest r) {
+        String bodyOfResponse = "Doctor can have appointment for patient case only if he can work on this case";
+        return handleExceptionInternal(e, bodyOfResponse, new HttpHeaders(), CONFLICT, r);
+    }
+
+    @ExceptionHandler(TimeIntervalsAreIntersectingException.class)
+    protected ResponseEntity<Object> handleIntersectingTimeIntervals(Exception e, WebRequest r) {
+        String bodyOfResponse = "Time intervals can not intersect";
+        return handleExceptionInternal(e, bodyOfResponse, new HttpHeaders(), CONFLICT, r);
     }
 }

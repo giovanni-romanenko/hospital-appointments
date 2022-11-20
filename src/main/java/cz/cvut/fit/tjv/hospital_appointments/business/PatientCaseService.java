@@ -18,14 +18,18 @@ public class PatientCaseService extends
         AbstractCrudService<Long, PatientCase, PatientCaseJpaRepository> {
 
     private final AppointmentService appointmentService;
+    private final DoctorService doctorService;
 
-    public PatientCaseService(PatientCaseJpaRepository repository, AppointmentService appointmentService) {
+    public PatientCaseService(PatientCaseJpaRepository repository, AppointmentService appointmentService,
+                              DoctorService doctorService) {
         super(repository);
         this.appointmentService = appointmentService;
+        this.doctorService = doctorService;
     }
 
     @Override
     public PatientCase update(PatientCase patientCase) {
+        checkNonNullableValues(patientCase);
         PatientCase existingPatientCase = readById(patientCase.getId()).orElseThrow(EntityNotFoundException::new);
         patientCase.setQualifiedDoctors(existingPatientCase.getQualifiedDoctors());
         return repository.save(patientCase);
@@ -52,6 +56,7 @@ public class PatientCaseService extends
         Appointment appointment = appointmentService.readById(appId).orElseThrow(EntityNotFoundException::new);
         if (patientCase.getAppointment() == null && appointment.getPatientCase() == null) {
             appointment.setPatientCase(patientCase);
+            doctorService.checkDoctorsOnlyHaveAppointmentsForPatientCasesWhichTheyCanWorkOn();
         }
         else if (!(appointment.equals(patientCase.getAppointment()) && patientCase.equals(appointment.getPatientCase()))) {
             throw new OneToOneRelationUpdateConflictException();
