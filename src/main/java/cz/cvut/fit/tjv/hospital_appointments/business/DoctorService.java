@@ -7,32 +7,24 @@ import cz.cvut.fit.tjv.hospital_appointments.domain.PatientCase;
 import cz.cvut.fit.tjv.hospital_appointments.exception.DeletingNonExistingEntityException;
 import cz.cvut.fit.tjv.hospital_appointments.exception.DoctorAppointmentPatientCaseException;
 import cz.cvut.fit.tjv.hospital_appointments.exception.EntityNotFoundException;
-import cz.cvut.fit.tjv.hospital_appointments.exception.TimeIntervalsAreIntersectingException;
 import lombok.NonNull;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Collection;
-import java.util.Set;
 
 @Service
 public class DoctorService extends
         AbstractCrudService<Long, Doctor, DoctorJpaRepository> {
 
-    private final AppointmentService appointmentService;
-    private final PatientCaseService patientCaseService;
-
-    public DoctorService(DoctorJpaRepository repository, AppointmentService appointmentService,
-                         PatientCaseService patientCaseService) {
+    public DoctorService(DoctorJpaRepository repository) {
         super(repository);
-        this.appointmentService = appointmentService;
-        this.patientCaseService = patientCaseService;
     }
 
     @Override
     public Doctor update(Doctor doctor) {
-        checkNonNullableValues(doctor);
         readById(doctor.getId()).orElseThrow(EntityNotFoundException::new);
+        checkNonNullableValues(doctor);
         return repository.save(doctor);
     }
 
@@ -41,15 +33,6 @@ public class DoctorService extends
         Doctor doctor = readById(id).orElseThrow(DeletingNonExistingEntityException::new);
         doctor.getAppointments().forEach(appointment -> appointment.setDoctor(null));
         doctor.getTreatablePatientCases().forEach(patientCase -> patientCase.getQualifiedDoctors().remove(doctor));
-    }
-
-    @Transactional
-    public void updateAppointmentForDoctor(@NonNull Long docId, @NonNull Long appId) {
-        Doctor doctor = readById(docId).orElseThrow(EntityNotFoundException::new);
-        Appointment appointment = appointmentService.readById(appId).orElseThrow(EntityNotFoundException::new);
-        checkDoctorAppointmentsTimesAreNotIntersecting(doctor, appointment);
-        appointment.setDoctor(doctor);
-        checkDoctorsOnlyHaveAppointmentsForPatientCasesWhichTheyCanWorkOn();
     }
 
     @Transactional
@@ -62,34 +45,6 @@ public class DoctorService extends
     public Collection<Appointment> readAllAppointmentsOfDoctor(@NonNull Long docId) {
         Doctor doctor = readById(docId).orElseThrow(EntityNotFoundException::new);
         return doctor.getAppointments();
-    }
-
-    @Transactional
-    public void updateDoctorCanTreatPatientCase(@NonNull Long docId, @NonNull Long caseId) {
-        Doctor doctor = readById(docId).orElseThrow(EntityNotFoundException::new);
-        PatientCase patientCase = patientCaseService.readById(caseId).orElseThrow(EntityNotFoundException::new);
-        patientCase.getQualifiedDoctors().add(doctor);
-    }
-
-    @Transactional
-    public void deleteDoctorCanTreatPatientCase(@NonNull Long docId, @NonNull Long caseId) {
-        Doctor doctor = readById(docId).orElseThrow(EntityNotFoundException::new);
-        PatientCase patientCase = patientCaseService.readById(caseId).orElseThrow(EntityNotFoundException::new);
-        patientCase.getQualifiedDoctors().remove(doctor);
-        checkDoctorsOnlyHaveAppointmentsForPatientCasesWhichTheyCanWorkOn();
-    }
-
-    private void checkDoctorAppointmentsTimesAreNotIntersecting(Doctor doctor, Appointment appointment) {
-        if (doctor.getAppointments().contains(appointment)) {
-            return ;
-        }
-        Set<Appointment> doctorAppointments = doctor.getAppointments();
-        doctorAppointments.forEach(doctorAppointment -> {
-            if (appointment.getToTime().isAfter(doctorAppointment.getFromTime())
-                    && doctorAppointment.getToTime().isAfter(appointment.getFromTime())) {
-                throw new TimeIntervalsAreIntersectingException();
-            }
-        });
     }
 
     void checkDoctorsOnlyHaveAppointmentsForPatientCasesWhichTheyCanWorkOn() {

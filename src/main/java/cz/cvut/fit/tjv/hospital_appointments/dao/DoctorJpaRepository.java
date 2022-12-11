@@ -15,7 +15,7 @@ public interface DoctorJpaRepository extends JpaRepository<Doctor, Long> {
            FROM Appointment app
            INNER JOIN Doctor doc ON doc.id = app.doctor.id
            INNER JOIN PatientCase pat ON pat.id = app.patientCase.id
-           WHERE pat MEMBER OF doc.treatablePatientCases
+           WHERE pat NOT MEMBER OF doc.treatablePatientCases
            """)
     List<Doctor> findAllDoctorsWhoHaveAppointmentsWithPatientCasesThatTheyCanNotWorkOn();
 }

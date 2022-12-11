@@ -29,8 +29,8 @@ public class PatientCaseService extends
 
     @Override
     public PatientCase update(PatientCase patientCase) {
-        checkNonNullableValues(patientCase);
         PatientCase existingPatientCase = readById(patientCase.getId()).orElseThrow(EntityNotFoundException::new);
+        checkNonNullableValues(patientCase);
         patientCase.setQualifiedDoctors(existingPatientCase.getQualifiedDoctors());
         return repository.save(patientCase);
     }
@@ -70,5 +70,20 @@ public class PatientCaseService extends
         if (appointment.equals(patientCase.getAppointment()) && patientCase.equals(appointment.getPatientCase())) {
             appointment.setPatientCase(null);
         }
+    }
+
+    @Transactional
+    public void updateTreatPatientCaseCanBeTreatedByDoctor(@NonNull Long caseId, @NonNull Long docId) {
+        PatientCase patientCase = readById(caseId).orElseThrow(EntityNotFoundException::new);
+        Doctor doctor = doctorService.readById(docId).orElseThrow(EntityNotFoundException::new);
+        patientCase.getQualifiedDoctors().add(doctor);
+    }
+
+    @Transactional
+    public void deleteTreatPatientCaseCanBeTreatedByDoctor(@NonNull Long caseId, @NonNull Long docId) {
+        PatientCase patientCase = readById(caseId).orElseThrow(EntityNotFoundException::new);
+        Doctor doctor = doctorService.readById(docId).orElseThrow(EntityNotFoundException::new);
+        patientCase.getQualifiedDoctors().remove(doctor);
+        doctorService.checkDoctorsOnlyHaveAppointmentsForPatientCasesWhichTheyCanWorkOn();
     }
 }

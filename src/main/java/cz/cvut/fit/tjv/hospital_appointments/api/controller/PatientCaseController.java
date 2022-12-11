@@ -97,4 +97,16 @@ public class PatientCaseController {
     public void deleteAppointmentOfPatientCase(@PathVariable Long caseId, @PathVariable Long appId) {
         patientCaseService.deleteAppointmentOfPatientCase(caseId, appId);
     }
+
+    @PutMapping("/patient_cases/{caseId}/doctors/{docId}")
+    @ResponseStatus(NO_CONTENT)
+    public void updateTreatPatientCaseCanBeTreatedByDoctor(@PathVariable Long caseId, @PathVariable Long docId) {
+        patientCaseService.updateTreatPatientCaseCanBeTreatedByDoctor(caseId, docId);
+    }
+
+    @DeleteMapping("/patient_cases/{caseId}/doctors/{docId}")
+    @ResponseStatus(NO_CONTENT)
+    public void deleteTreatPatientCaseCanBeTreatedByDoctor(@PathVariable Long caseId, @PathVariable Long docId) {
+        patientCaseService.deleteTreatPatientCaseCanBeTreatedByDoctor(caseId, docId);
+    }
 }

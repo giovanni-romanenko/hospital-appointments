@@ -80,6 +80,12 @@ public class AppointmentController {
         return DoctorConverter.toDto(appointment.getDoctor());
     }
 
+    @PutMapping("/appointments/{appId}/doctors/{docId}")
+    @ResponseStatus(NO_CONTENT)
+    public void updateDoctorOfAppointment(@PathVariable Long appId, @PathVariable Long docId) {
+        appointmentService.updateDoctorOfAppointment(appId, docId);
+    }
+
     @DeleteMapping("/appointments/{id}/doctors")
     @ResponseStatus(NO_CONTENT)
     public void deleteDoctorOfAppointment(@PathVariable Long id) {
