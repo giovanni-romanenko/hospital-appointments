@@ -14,6 +14,8 @@ import static javax.persistence.FetchType.EAGER;
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)
 @ToString(onlyExplicitlyIncluded = true)
 @NoArgsConstructor
+@AllArgsConstructor
+@Builder(builderMethodName = "builderWithoutRelations")
 @Entity
 public class Doctor implements Serializable {
 
@@ -30,13 +32,9 @@ public class Doctor implements Serializable {
     private String position;
 
     @OneToMany(mappedBy = "doctor", fetch = EAGER)
+    @Builder.Default
     private Set<Appointment> appointments = new HashSet<>();
     @ManyToMany(mappedBy = "qualifiedDoctors", fetch = EAGER)
+    @Builder.Default
     private Set<PatientCase> treatablePatientCases = new HashSet<>();
-
-    public Doctor(Long id, String name, String position) {
-        this.id = id;
-        this.name = name;
-        this.position = position;
-    }
 }

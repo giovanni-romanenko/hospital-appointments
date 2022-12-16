@@ -4,12 +4,15 @@ import cz.cvut.fit.tjv.hospital_appointments.api.dto.PatientCaseDto;
 import cz.cvut.fit.tjv.hospital_appointments.domain.PatientCase;
 
 import java.util.Collection;
-import java.util.stream.Collectors;
 
 public class PatientCaseConverter {
 
     public static PatientCase fromDto(PatientCaseDto dto) {
-        return new PatientCase(dto.getId(), dto.getPatientName(), dto.getProblem());
+        return PatientCase.builderWithoutRelations()
+                .id(dto.getId())
+                .patientName(dto.getPatientName())
+                .problem(dto.getProblem())
+                .build();
     }
 
     public static PatientCaseDto toDto(PatientCase patientCase) {
@@ -23,6 +26,6 @@ public class PatientCaseConverter {
     public static Collection<PatientCaseDto> toDtoMany(Collection<PatientCase> patientCases) {
         return patientCases.stream()
                 .map(PatientCaseConverter::toDto)
-                .collect(Collectors.toList());
+                .toList();
     }
 }

@@ -14,6 +14,8 @@ import static javax.persistence.FetchType.EAGER;
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)
 @ToString(onlyExplicitlyIncluded = true)
 @NoArgsConstructor
+@AllArgsConstructor
+@Builder(builderMethodName = "builderWithoutRelations")
 @Entity
 public class PatientCase implements Serializable {
 
@@ -30,18 +32,14 @@ public class PatientCase implements Serializable {
     private String problem;
 
     @OneToOne(mappedBy = "patientCase", fetch = EAGER)
-    private Appointment appointment;
+    @Builder.Default
+    private Appointment appointment = null;
     @ManyToMany(fetch = EAGER)
     @JoinTable(
             name = "qualification_to_treat_patient_case",
             joinColumns = @JoinColumn(name = "patient_case_fk"),
             inverseJoinColumns = @JoinColumn(name = "doctor_fk")
     )
+    @Builder.Default
     private Set<Doctor> qualifiedDoctors = new HashSet<>();
-
-    public PatientCase(Long id, String patientName, String problem) {
-        this.id = id;
-        this.patientName = patientName;
-        this.problem = problem;
-    }
 }

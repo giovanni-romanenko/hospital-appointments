@@ -13,6 +13,8 @@ import static javax.persistence.FetchType.EAGER;
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)
 @ToString(onlyExplicitlyIncluded = true)
 @NoArgsConstructor
+@AllArgsConstructor
+@Builder(builderMethodName = "builderWithoutRelations")
 @Entity
 public class Appointment implements Serializable {
 
@@ -30,14 +32,10 @@ public class Appointment implements Serializable {
 
     @OneToOne(fetch = EAGER)
     @JoinColumn(name = "patient_case_fk")
-    private PatientCase patientCase;
+    @Builder.Default
+    private PatientCase patientCase = null;
     @ManyToOne(fetch = EAGER)
     @JoinColumn(name = "doctor_fk")
-    private Doctor doctor;
-
-    public Appointment(Long id, LocalDateTime fromTime, LocalDateTime toTime) {
-        this.id = id;
-        this.fromTime = fromTime;
-        this.toTime = toTime;
-    }
+    @Builder.Default
+    private Doctor doctor = null;
 }
