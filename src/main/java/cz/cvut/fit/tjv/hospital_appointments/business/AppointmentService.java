@@ -26,9 +26,9 @@ public class AppointmentService extends
 
     @Override
     public Appointment update(Appointment appointment) {
-        Appointment existingAppointment = readById(appointment.getId()).orElseThrow(EntityNotFoundException::new);
         checkNonNullableValues(appointment);
         checkEntityIntegrityConstraints(appointment);
+        Appointment existingAppointment = readById(appointment.getId()).orElseThrow(EntityNotFoundException::new);
         if (existingAppointment.getDoctor() != null) {
             checkDoctorAppointmentsTimesAreNotIntersecting(existingAppointment.getDoctor(), appointment);
         }

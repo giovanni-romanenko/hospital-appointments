@@ -29,8 +29,8 @@ public class PatientCaseService extends
 
     @Override
     public PatientCase update(PatientCase patientCase) {
-        PatientCase existingPatientCase = readById(patientCase.getId()).orElseThrow(EntityNotFoundException::new);
         checkNonNullableValues(patientCase);
+        PatientCase existingPatientCase = readById(patientCase.getId()).orElseThrow(EntityNotFoundException::new);
         patientCase.setQualifiedDoctors(existingPatientCase.getQualifiedDoctors());
         return repository.save(patientCase);
     }

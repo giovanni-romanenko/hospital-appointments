@@ -3,8 +3,9 @@ package cz.cvut.fit.tjv.hospital_appointments.dao;
 import cz.cvut.fit.tjv.hospital_appointments.domain.Appointment;
 import cz.cvut.fit.tjv.hospital_appointments.domain.Doctor;
 import cz.cvut.fit.tjv.hospital_appointments.domain.PatientCase;
-import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestInstance;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 
@@ -13,8 +14,10 @@ import java.util.List;
 import java.util.Set;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.TestInstance.Lifecycle.PER_CLASS;
 
 @DataJpaTest
+@TestInstance(PER_CLASS)
 public class DoctorJpaRepositoryTest {
 
     @Autowired private AppointmentJpaRepository appointmentJpaRepository;
@@ -38,64 +41,23 @@ public class DoctorJpaRepositoryTest {
     private final PatientCase pat2 = PatientCase.builderWithoutRelations().id(8L).patientName("Ash").problem("Head").build();
     private final PatientCase pat3 = PatientCase.builderWithoutRelations().id(9L).patientName("Kevin").problem("Leg").build();
 
-    @AfterEach
-    public void tearDown() {
-        // todo - google how to properly save and remove entities in datajpatest
-        removeAllEntityRelations();
-        appointmentJpaRepository.deleteAll();
-        doctorJpaRepository.deleteAll();
-        patientCaseJpaRepository.deleteAll();
+    @BeforeAll
+    public void prepareDataEntities() {
+        saveEntities();
+        app1.setPatientCase(pat1);
+        app2.setPatientCase(pat2);
+        app3.setPatientCase(pat3);
+        app1.setDoctor(doc1);
+        app2.setDoctor(doc2);
+        app3.setDoctor(doc3);
+        pat1.setQualifiedDoctors(Set.of(doc2, doc3));
+        pat2.setQualifiedDoctors(Set.of(doc1, doc2));
+        pat3.setQualifiedDoctors(Set.of(doc3));
+        saveEntities();
     }
 
     @Test
     public void checkFindAllDoctorsWhoHaveAppointmentsWithPatientCasesThatTheyCanNotWorkOn1() {
-        saveEntities();
-        app1.setPatientCase(pat1);
-        app2.setPatientCase(pat2);
-        app3.setPatientCase(pat3);
-        app1.setDoctor(doc1);
-        app2.setDoctor(doc2);
-        app3.setDoctor(doc3);
-        pat1.setQualifiedDoctors(Set.of(doc2, doc3));
-        pat2.setQualifiedDoctors(Set.of(doc1, doc2));
-        pat3.setQualifiedDoctors(Set.of(doc3));
-        saveEntities();
-        assertThat(doctorJpaRepository.findAllDoctorsWhoHaveAppointmentsWithPatientCasesThatTheyCanNotWorkOn())
-                .as("Find doctors breaking IC3 should return %s", List.of(doc1))
-                .isEqualTo(List.of(doc1));
-    }
-
-    @Test
-    public void checkFindAllDoctorsWhoHaveAppointmentsWithPatientCasesThatTheyCanNotWorkOn2() {
-        saveEntities();
-        app1.setPatientCase(pat1);
-        app2.setPatientCase(pat2);
-        app3.setPatientCase(pat3);
-        app1.setDoctor(doc1);
-        app2.setDoctor(doc2);
-        app3.setDoctor(doc3);
-        pat1.setQualifiedDoctors(Set.of(doc2, doc3));
-        pat2.setQualifiedDoctors(Set.of(doc1, doc2));
-        pat3.setQualifiedDoctors(Set.of(doc3));
-        saveEntities();
-        assertThat(doctorJpaRepository.findAllDoctorsWhoHaveAppointmentsWithPatientCasesThatTheyCanNotWorkOn())
-                .as("Find doctors breaking IC3 should return %s", List.of(doc1))
-                .isEqualTo(List.of(doc1));
-    }
-
-    @Test
-    public void checkFindAllDoctorsWhoHaveAppointmentsWithPatientCasesThatTheyCanNotWorkOn3() {
-        saveEntities();
-        app1.setPatientCase(pat1);
-        app2.setPatientCase(pat2);
-        app3.setPatientCase(pat3);
-        app1.setDoctor(doc1);
-        app2.setDoctor(doc2);
-        app3.setDoctor(doc3);
-        pat1.setQualifiedDoctors(Set.of(doc2, doc3));
-        pat2.setQualifiedDoctors(Set.of(doc1, doc2));
-        pat3.setQualifiedDoctors(Set.of(doc3));
-        saveEntities();
         assertThat(doctorJpaRepository.findAllDoctorsWhoHaveAppointmentsWithPatientCasesThatTheyCanNotWorkOn())
                 .as("Find doctors breaking IC3 should return %s", List.of(doc1))
                 .isEqualTo(List.of(doc1));
@@ -105,14 +67,5 @@ public class DoctorJpaRepositoryTest {
         appointmentJpaRepository.saveAll(List.of(app1, app2, app3));
         doctorJpaRepository.saveAll(List.of(doc1, doc2, doc3));
         patientCaseJpaRepository.saveAll(List.of(pat1, pat2, pat3));
-    }
-
-    private void removeAllEntityRelations() {
-        appointmentJpaRepository.findAll().forEach(appointment -> {
-            appointment.setDoctor(null);
-            appointment.setPatientCase(null);
-        });
-        patientCaseJpaRepository.findAll().forEach(patientCase ->
-                patientCase.setQualifiedDoctors(Set.of()));
     }
 }

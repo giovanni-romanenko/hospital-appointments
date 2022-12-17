@@ -23,8 +23,8 @@ public class DoctorService extends
 
     @Override
     public Doctor update(Doctor doctor) {
-        readById(doctor.getId()).orElseThrow(EntityNotFoundException::new);
         checkNonNullableValues(doctor);
+        readById(doctor.getId()).orElseThrow(EntityNotFoundException::new);
         return repository.save(doctor);
     }
 
