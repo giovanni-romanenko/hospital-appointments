@@ -37,7 +37,8 @@ public class AppointmentServiceTest {
         when(appointmentRepository.save(app)).thenReturn(appWithId);
         assertThat(appointmentService.create(app))
                 .as("Service appointment create should return created entity %s", appWithId)
-                .isEqualTo(appWithId);
+                .extracting(Appointment::getId, Appointment::getFromTime, Appointment::getToTime)
+                .containsExactly(appWithId.getId(), appWithId.getFromTime(), appWithId.getToTime());
         verify(appointmentRepository).save(app);
     }
 
@@ -107,7 +108,9 @@ public class AppointmentServiceTest {
         when(appointmentRepository.findById(4L)).thenReturn(Optional.of(app));
         assertThat(appointmentService.readById(4L))
                 .as("Service appointment read should return entity %s", app)
-                .isEqualTo(Optional.of(app));
+                .get()
+                .extracting(Appointment::getId, Appointment::getFromTime, Appointment::getToTime)
+                .containsExactly(app.getId(), app.getFromTime(), app.getToTime());
         verify(appointmentRepository).findById(4L);
     }
 
@@ -129,7 +132,8 @@ public class AppointmentServiceTest {
         when(appointmentRepository.findAll()).thenReturn(apps);
         assertThat(appointmentService.readAll())
                 .as("Service appointment read all should return entities %s", apps)
-                .isEqualTo(apps);
+                .extracting(Appointment::getId, Appointment::getFromTime, Appointment::getToTime)
+                .containsExactlyElementsOf(apps.stream().map(app -> tuple(app.getId(), app.getFromTime(), app.getToTime())).toList());
         verify(appointmentRepository).findAll();
     }
 
@@ -163,6 +167,8 @@ public class AppointmentServiceTest {
         PatientCase pat = PatientCase.builderWithoutRelations().id(9L).patientName("An").problem("The").build();
         app.setDoctor(doc);
         app.setPatientCase(pat);
+        doc.setAppointments(Set.of(app));
+        pat.setAppointment(app);
         updatedAppWithRelations.setDoctor(doc);
         updatedAppWithRelations.setPatientCase(pat);
 
@@ -170,7 +176,18 @@ public class AppointmentServiceTest {
         when(appointmentRepository.save(updatedAppWithRelations)).thenReturn(updatedAppWithRelations);
         assertThat(appointmentService.update(updatedApp))
                 .as("Service appointment update should return entity %s", updatedAppWithRelations)
-                .isEqualTo(updatedAppWithRelations);
+                .extracting(
+                        Appointment::getId,
+                        Appointment::getFromTime,
+                        Appointment::getToTime,
+                        Appointment::getDoctor,
+                        Appointment::getPatientCase)
+                .containsExactly(
+                        updatedAppWithRelations.getId(),
+                        updatedAppWithRelations.getFromTime(),
+                        updatedAppWithRelations.getToTime(),
+                        updatedAppWithRelations.getDoctor(),
+                        updatedAppWithRelations.getPatientCase());
         verify(appointmentRepository).save(updatedAppWithRelations);
     }
 

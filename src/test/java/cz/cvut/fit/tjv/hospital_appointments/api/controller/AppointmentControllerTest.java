@@ -57,8 +57,8 @@ public class AppointmentControllerTest {
     public void checkAppointmentSuccessfulCreateReturnsCorrectData() throws Exception {
         Appointment createdApp = Appointment.builderWithoutRelations().id(null).fromTime(time4).toTime(time5).build();
         Appointment createdAppWithId = Appointment.builderWithoutRelations().id(4L).fromTime(time4).toTime(time5).build();
-        when(appointmentService.create(createdApp)).thenReturn(createdAppWithId);
 
+        when(appointmentService.create(createdApp)).thenReturn(createdAppWithId);
         mockMvc.perform(post("/appointments")
                         .contentType(APPLICATION_JSON)
                         .content(jsonMapper.writeValueAsString(toDto(createdApp))))
@@ -71,8 +71,8 @@ public class AppointmentControllerTest {
     public void checkAppointmentCreateErrorMessageWhenFromTimeParameterIsNull() throws Exception {
         Appointment createdApp = Appointment.builderWithoutRelations().id(null).fromTime(null).toTime(time2).build();
         AppointmentDto createdAppDto = AppointmentDto.builder().id(7L).fromTime(createdApp.getFromTime()).toTime(createdApp.getToTime()).build();
-        when(appointmentService.create(createdApp)).thenThrow(NonNullableFieldIsNullException.class);
 
+        when(appointmentService.create(createdApp)).thenThrow(NonNullableFieldIsNullException.class);
         mockMvc.perform(post("/appointments")
                         .contentType(APPLICATION_JSON)
                         .content(jsonMapper.writeValueAsString(createdAppDto)))
@@ -83,8 +83,8 @@ public class AppointmentControllerTest {
     @Test
     public void checkAppointmentCreateErrorMessageWhenFromTimeIsAfterToTime() throws Exception {
         Appointment createdApp = Appointment.builderWithoutRelations().id(null).fromTime(time4).toTime(time3).build();
-        when(appointmentService.create(createdApp)).thenThrow(EndTimeBeforeStartTimeException.class);
 
+        when(appointmentService.create(createdApp)).thenThrow(EndTimeBeforeStartTimeException.class);
         mockMvc.perform(post("/appointments")
                         .contentType(APPLICATION_JSON)
                         .content(jsonMapper.writeValueAsString(toDto(createdApp))))
@@ -104,7 +104,6 @@ public class AppointmentControllerTest {
     @Test
     public void checkAppointmentReadErrorMessageWhenIdDoesNotExist() throws Exception {
         when(appointmentService.readById(1001L)).thenReturn(Optional.empty());
-
         mockMvc.perform(get("/appointments/1001")
                         .contentType(APPLICATION_JSON))
                 .andExpect(status().isNotFound())
@@ -125,8 +124,8 @@ public class AppointmentControllerTest {
     @Test
     public void checkAppointmentSuccessfulUpdateReturnsCorrectData() throws Exception {
         Appointment updatedApp3 = Appointment.builderWithoutRelations().id(3L).fromTime(time1).toTime(time6).build();
-        when(appointmentService.update(updatedApp3)).thenReturn(updatedApp3);
 
+        when(appointmentService.update(updatedApp3)).thenReturn(updatedApp3);
         mockMvc.perform(put("/appointments/3")
                         .contentType(APPLICATION_JSON)
                         .content(jsonMapper.writeValueAsString(toDto(updatedApp3))))
@@ -138,8 +137,8 @@ public class AppointmentControllerTest {
     @Test
     public void checkAppointmentUpdateErrorMessageWhenIdDoesNotExist() throws Exception {
         Appointment updatedApp = Appointment.builderWithoutRelations().id(1001L).fromTime(time3).toTime(time4).build();
-        when(appointmentService.update(updatedApp)).thenThrow(EntityNotFoundException.class);
 
+        when(appointmentService.update(updatedApp)).thenThrow(EntityNotFoundException.class);
         mockMvc.perform(put("/appointments/1001")
                         .contentType(APPLICATION_JSON)
                         .content(jsonMapper.writeValueAsString(toDto(updatedApp))))
@@ -150,8 +149,8 @@ public class AppointmentControllerTest {
     @Test
     public void checkAppointmentUpdateErrorMessageWhenToTimeParameterIsNull() throws Exception {
         Appointment updatedApp = Appointment.builderWithoutRelations().id(2L).fromTime(time5).toTime(null).build();
-        when(appointmentService.update(updatedApp)).thenThrow(NonNullableFieldIsNullException.class);
 
+        when(appointmentService.update(updatedApp)).thenThrow(NonNullableFieldIsNullException.class);
         mockMvc.perform(put("/appointments/2")
                         .contentType(APPLICATION_JSON)
                         .content(jsonMapper.writeValueAsString(toDto(updatedApp))))
@@ -162,8 +161,8 @@ public class AppointmentControllerTest {
     @Test
     public void checkAppointmentUpdateErrorMessageWhenFromTimeIsAfterToTime() throws Exception {
         Appointment updatedApp = Appointment.builderWithoutRelations().id(1L).fromTime(time5).toTime(time4).build();
-        when(appointmentService.update(updatedApp)).thenThrow(EndTimeBeforeStartTimeException.class);
 
+        when(appointmentService.update(updatedApp)).thenThrow(EndTimeBeforeStartTimeException.class);
         mockMvc.perform(put("/appointments/1")
                         .contentType(APPLICATION_JSON)
                         .content(jsonMapper.writeValueAsString(toDto(updatedApp))))
@@ -174,7 +173,6 @@ public class AppointmentControllerTest {
     @Test
     public void checkAppointmentDeleteResponseForExistingEntity() throws Exception {
         doNothing().when(appointmentService).deleteById(1L);
-
         mockMvc.perform(delete("/appointments/1")
                         .contentType(APPLICATION_JSON))
                 .andExpect(status().isNoContent())
@@ -184,7 +182,6 @@ public class AppointmentControllerTest {
     @Test
     public void checkAppointmentDeleteResponseForNonExistingEntity() throws Exception {
         doThrow(DeletingNonExistingEntityException.class).when(appointmentService).deleteById(1001L);
-
         mockMvc.perform(delete("/appointments/1001")
                         .contentType(APPLICATION_JSON))
                 .andExpect(status().isNoContent())
