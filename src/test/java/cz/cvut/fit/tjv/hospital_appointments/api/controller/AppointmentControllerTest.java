@@ -56,7 +56,7 @@ public class AppointmentControllerTest {
     @Test
     public void checkAppointmentSuccessfulCreateReturnsCorrectData() throws Exception {
         Appointment createdApp = Appointment.builderWithoutRelations().id(null).fromTime(time4).toTime(time5).build();
-        Appointment createdAppWithId = Appointment.builderWithoutRelations().id(4L).fromTime(time4).toTime(time5).build();
+        Appointment createdAppWithId = Appointment.builderWithoutRelations().id(4L).fromTime(createdApp.getFromTime()).toTime(createdApp.getToTime()).build();
 
         when(appointmentService.create(createdApp)).thenReturn(createdAppWithId);
         mockMvc.perform(post("/appointments")
