@@ -1,0 +1,708 @@
+openapi: 3.0.1
+info:
+  title: OpenAPI definition
+  version: v0
+servers:
+  - url: http://localhost:8080
+    description: Generated server url
+paths:
+  /patient_cases/{id}:
+    get:
+      tags:
+        - patient-case-controller
+      summary: Read patient case
+      operationId: readById
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PatientCaseDto_FullDataWithId'
+        "404":
+          description: Not Found
+          content:
+            text/plain: {}
+    put:
+      tags:
+        - patient-case-controller
+      summary: Update patient case
+      operationId: update
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PatientCaseDto_FullDataWithoutId'
+        required: true
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PatientCaseDto_FullDataWithId'
+        "404":
+          description: Not Found
+          content:
+            text/plain: {}
+    delete:
+      tags:
+        - patient-case-controller
+      summary: Delete patient case
+      operationId: deleteById
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        "204":
+          description: No Content
+  /patient_cases/{caseId}/doctors/{docId}:
+    put:
+      tags:
+        - patient-case-controller
+      summary: Update patient case can be treated by doctor
+      operationId: updatePatientCaseCanBeTreatedByDoctor
+      parameters:
+        - name: caseId
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+        - name: docId
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        "204":
+          description: No Content
+        "404":
+          description: Not Found
+          content:
+            text/plain: {}
+    delete:
+      tags:
+        - patient-case-controller
+      summary: Delete patient case can be treated by doctor
+      operationId: deletePatientCaseCanBeTreatedByDoctor
+      parameters:
+        - name: caseId
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+        - name: docId
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        "204":
+          description: No Content
+        "404":
+          description: Not Found
+          content:
+            text/plain: {}
+        "409":
+          description: Conflict
+          content:
+            text/plain: {}
+  /patient_cases/{caseId}/appointments/{appId}:
+    put:
+      tags:
+        - patient-case-controller
+      summary: Update appointment of patient case
+      operationId: updateAppointmentOfPatientCase
+      parameters:
+        - name: caseId
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+        - name: appId
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        "204":
+          description: No Content
+        "404":
+          description: Not Found
+          content:
+            text/plain: {}
+        "409":
+          description: Conflict
+          content:
+            text/plain: {}
+    delete:
+      tags:
+        - patient-case-controller
+      summary: Delete appointment of patient case
+      operationId: deleteAppointmentOfPatientCase
+      parameters:
+        - name: caseId
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+        - name: appId
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        "204":
+          description: No Content
+        "404":
+          description: Not Found
+          content:
+            text/plain: {}
+  /doctors/{id}:
+    get:
+      tags:
+        - doctor-controller
+      summary: Read doctor
+      operationId: readById_1
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DoctorDto_FullDataWithId'
+        "404":
+          description: Not Found
+          content:
+            text/plain: {}
+    put:
+      tags:
+        - doctor-controller
+      summary: Update doctor
+      operationId: update_1
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/DoctorDto_FullDataWithoutId'
+        required: true
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DoctorDto_FullDataWithId'
+        "404":
+          description: Not Found
+          content:
+            text/plain: {}
+    delete:
+      tags:
+        - doctor-controller
+      summary: Delete doctor
+      operationId: deleteById_1
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        "204":
+          description: No Content
+  /appointments/{id}:
+    get:
+      tags:
+        - appointment-controller
+      summary: Read appointment
+      operationId: readById_2
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        "404":
+          description: Not Found
+          content:
+            text/plain: {}
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AppointmentDto_FullDataWithId'
+    put:
+      tags:
+        - appointment-controller
+      summary: Update appointment
+      operationId: update_2
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AppointmentDto_FullDataWithoutId'
+        required: true
+      responses:
+        "422":
+          description: Unprocessable Entity
+          content:
+            text/plain: {}
+        "404":
+          description: Not Found
+          content:
+            text/plain: {}
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AppointmentDto_FullDataWithId'
+        "409":
+          description: Conflict
+          content:
+            text/plain: {}
+    delete:
+      tags:
+        - appointment-controller
+      summary: Delete appointment
+      operationId: deleteById_2
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        "204":
+          description: No Content
+  /appointments/{appId}/doctors/{docId}:
+    put:
+      tags:
+        - appointment-controller
+      summary: Update doctor of appointment
+      operationId: updateDoctorOfAppointment
+      parameters:
+        - name: appId
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+        - name: docId
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        "204":
+          description: No Content
+        "404":
+          description: Not Found
+          content:
+            text/plain: {}
+        "409":
+          description: Conflict
+          content:
+            text/plain: {}
+  /patient_cases:
+    get:
+      tags:
+        - patient-case-controller
+      summary: Read all patient cases
+      operationId: readAll
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/PatientCaseDto_FullDataWithId'
+    post:
+      tags:
+        - patient-case-controller
+      summary: Create patient case
+      operationId: create
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PatientCaseDto_FullDataWithoutId'
+        required: true
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PatientCaseDto_FullDataWithId'
+  /doctors:
+    get:
+      tags:
+        - doctor-controller
+      summary: Read all doctors
+      operationId: readAll_1
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/DoctorDto_FullDataWithId'
+    post:
+      tags:
+        - doctor-controller
+      summary: Create doctor
+      operationId: create_1
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/DoctorDto_FullDataWithoutId'
+        required: true
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DoctorDto_FullDataWithId'
+  /appointments:
+    get:
+      tags:
+        - appointment-controller
+      summary: Read all appointments
+      operationId: readAll_2
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/AppointmentDto_FullDataWithId'
+    post:
+      tags:
+        - appointment-controller
+      summary: Create appointment
+      operationId: create_2
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AppointmentDto_FullDataWithoutId'
+        required: true
+      responses:
+        "422":
+          description: Unprocessable Entity
+          content:
+            text/plain: {}
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AppointmentDto_FullDataWithId'
+  /patient_cases/{id}/doctors:
+    get:
+      tags:
+        - patient-case-controller
+      summary: Read all doctors who can work on patient case
+      operationId: readAllDoctorsWhoCanWorkOnPatientCase
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/DoctorDto_FullDataWithId'
+        "404":
+          description: Not Found
+          content:
+            text/plain: {}
+  /patient_cases/{id}/appointments:
+    get:
+      tags:
+        - patient-case-controller
+      summary: Read appointment of patient case
+      operationId: readAppointmentOfPatientCase
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        "404":
+          description: Not Found
+          content:
+            text/plain: {}
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AppointmentDto_FullDataWithId'
+  /doctors/{id}/patient_cases:
+    get:
+      tags:
+        - doctor-controller
+      summary: Read all patient cases treatable by doctor
+      operationId: readAllPatientCasesTreatableByDoctor
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        "404":
+          description: Not Found
+          content:
+            text/plain: {}
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/PatientCaseDto_FullDataWithId'
+  /doctors/{id}/appointments:
+    get:
+      tags:
+        - doctor-controller
+      summary: Read all appointments of doctor
+      operationId: readAllAppointmentsOfDoctor
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/AppointmentDto_FullDataWithId'
+        "404":
+          description: Not Found
+          content:
+            text/plain: {}
+  /appointments/{id}/patient_cases:
+    get:
+      tags:
+        - appointment-controller
+      summary: Read patient case of appointment
+      operationId: readPatientCaseOfAppointment
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PatientCaseDto_FullDataWithId'
+        "404":
+          description: Not Found
+          content:
+            text/plain: {}
+  /appointments/{id}/doctors:
+    get:
+      tags:
+        - appointment-controller
+      summary: Read doctor of appointment
+      operationId: readDoctorOfAppointment
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DoctorDto_FullDataWithId'
+        "404":
+          description: Not Found
+          content:
+            text/plain: {}
+    delete:
+      tags:
+        - appointment-controller
+      summary: Delete doctor of appointment
+      operationId: deleteDoctorOfAppointment
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        "204":
+          description: No Content
+        "404":
+          description: Not Found
+          content:
+            text/plain: {}
+components:
+  schemas:
+    PatientCaseDto_FullDataWithoutId:
+      type: object
+      properties:
+        patientName:
+          type: string
+          example: Bob
+        problem:
+          type: string
+          example: Headache
+    PatientCaseDto_FullDataWithId:
+      required:
+        - id
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+        patientName:
+          type: string
+          example: Bob
+        problem:
+          type: string
+          example: Headache
+    DoctorDto_FullDataWithoutId:
+      type: object
+      properties:
+        name:
+          type: string
+          example: John
+        position:
+          type: string
+          example: Medic
+    DoctorDto_FullDataWithId:
+      required:
+        - id
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+        name:
+          type: string
+          example: John
+        position:
+          type: string
+          example: Medic
+    AppointmentDto_FullDataWithoutId:
+      required:
+        - fromTime
+        - toTime
+      type: object
+      properties:
+        fromTime:
+          type: string
+          example: 20/10/2001 12:30:30
+        toTime:
+          type: string
+          example: 20/10/2001 13:30:30
+    AppointmentDto_FullDataWithId:
+      required:
+        - fromTime
+        - id
+        - toTime
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+        fromTime:
+          type: string
+          example: 20/10/2001 12:30:30
+        toTime:
+          type: string
+          example: 20/10/2001 13:30:30
