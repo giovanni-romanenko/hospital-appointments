@@ -73,14 +73,14 @@ public class PatientCaseService extends
     }
 
     @Transactional
-    public void updateTreatPatientCaseCanBeTreatedByDoctor(@NonNull Long caseId, @NonNull Long docId) {
+    public void updatePatientCaseCanBeTreatedByDoctor(@NonNull Long caseId, @NonNull Long docId) {
         PatientCase patientCase = readById(caseId).orElseThrow(EntityNotFoundException::new);
         Doctor doctor = doctorService.readById(docId).orElseThrow(EntityNotFoundException::new);
         patientCase.getQualifiedDoctors().add(doctor);
     }
 
     @Transactional
-    public void deleteTreatPatientCaseCanBeTreatedByDoctor(@NonNull Long caseId, @NonNull Long docId) {
+    public void deletePatientCaseCanBeTreatedByDoctor(@NonNull Long caseId, @NonNull Long docId) {
         PatientCase patientCase = readById(caseId).orElseThrow(EntityNotFoundException::new);
         Doctor doctor = doctorService.readById(docId).orElseThrow(EntityNotFoundException::new);
         patientCase.getQualifiedDoctors().remove(doctor);
