@@ -5,7 +5,7 @@ plugins {
     id 'io.freefair.lombok' version '6.5.1'
 }
 
-group 'cz.cvut.fit.tjv.hospital_appointments'
+group 'cz.cvut.fit.tjv'
 version '1.0.0-SNAPSHOT'
 sourceCompatibility = JavaVersion.VERSION_17
 targetCompatibility = JavaVersion.VERSION_17
