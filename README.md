@@ -1,5 +1,7 @@
 # Description
 
+This is one of my university semestral projects, it's a simple BE application using Spring Framework
+
 Look into `./Description.odt`
 
 ## How to run
