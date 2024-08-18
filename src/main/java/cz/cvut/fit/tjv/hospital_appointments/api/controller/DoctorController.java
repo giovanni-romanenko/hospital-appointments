@@ -18,6 +18,7 @@ import io.swagger.v3.oas.annotations.media.ArraySchema;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Collection;
@@ -28,13 +29,10 @@ import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 import static org.springframework.http.MediaType.TEXT_PLAIN_VALUE;
 
 @RestController
+@RequestMapping("/doctors")
 public class DoctorController {
 
-    private final DoctorService doctorService;
-
-    public DoctorController(DoctorService doctorService) {
-        this.doctorService = doctorService;
-    }
+    @Autowired private DoctorService doctorService;
 
     @Operation(summary = "Read doctor")
     @ApiResponse(responseCode = "200", content = @Content(
@@ -43,7 +41,7 @@ public class DoctorController {
     @ApiResponse(responseCode = "404", content = @Content(
             mediaType = TEXT_PLAIN_VALUE))
     @JsonView(DoctorViews.FullDataWithId.class)
-    @GetMapping("/doctors/{id}")
+    @GetMapping("/{id}")
     public DoctorDto readById(@PathVariable Long id) {
         return toDto(doctorService.readById(id).orElseThrow(EntityNotFoundException::new));
     }
@@ -53,7 +51,7 @@ public class DoctorController {
             mediaType = APPLICATION_JSON_VALUE,
             array = @ArraySchema(schema = @Schema(implementation = DoctorDto.class))))
     @JsonView(DoctorViews.FullDataWithId.class)
-    @GetMapping("/doctors")
+    @GetMapping
     public Collection<DoctorDto> readAll() {
         return toDtoMany(doctorService.readAll());
     }
@@ -63,7 +61,7 @@ public class DoctorController {
             mediaType = APPLICATION_JSON_VALUE,
             schema = @Schema(implementation = DoctorDto.class)))
     @JsonView(DoctorViews.FullDataWithId.class)
-    @PostMapping("/doctors")
+    @PostMapping
     public DoctorDto create(
             @JsonView(DoctorViews.FullDataWithoutId.class)
             @RequestBody DoctorDto doctorDto) {
@@ -81,7 +79,7 @@ public class DoctorController {
     @ApiResponse(responseCode = "404", content = @Content(
             mediaType = TEXT_PLAIN_VALUE))
     @JsonView(DoctorViews.FullDataWithId.class)
-    @PutMapping("/doctors/{id}")
+    @PutMapping("/{id}")
     public DoctorDto update(
             @PathVariable Long id,
             @JsonView(DoctorViews.FullDataWithoutId.class)
@@ -92,7 +90,7 @@ public class DoctorController {
     }
 
     @Operation(summary = "Delete doctor")
-    @DeleteMapping("/doctors/{id}")
+    @DeleteMapping("/{id}")
     @ResponseStatus(NO_CONTENT)
     public void deleteById(@PathVariable Long id) {
         doctorService.deleteById(id);
@@ -105,7 +103,7 @@ public class DoctorController {
     @ApiResponse(responseCode = "404", content = @Content(
             mediaType = TEXT_PLAIN_VALUE))
     @JsonView(AppointmentViews.FullDataWithId.class)
-    @GetMapping("/doctors/{id}/appointments")
+    @GetMapping("/{id}/appointments")
     public Collection<AppointmentDto> readAllAppointmentsOfDoctor(@PathVariable Long id) {
         return AppointmentConverter.toDtoMany(doctorService.readAllAppointmentsOfDoctor(id));
     }
@@ -117,7 +115,7 @@ public class DoctorController {
     @ApiResponse(responseCode = "404", content = @Content(
             mediaType = TEXT_PLAIN_VALUE))
     @JsonView(PatientCaseViews.FullDataWithId.class)
-    @GetMapping("/doctors/{id}/patient_cases")
+    @GetMapping("/{id}/patient_cases")
     public Collection<PatientCaseDto> readAllPatientCasesTreatableByDoctor(@PathVariable Long id) {
         return PatientCaseConverter.toDtoMany(doctorService.readAllPatientCasesTreatableByDoctor(id));
     }

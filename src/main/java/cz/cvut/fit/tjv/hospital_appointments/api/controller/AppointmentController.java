@@ -18,6 +18,7 @@ import io.swagger.v3.oas.annotations.media.ArraySchema;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Collection;
@@ -28,13 +29,10 @@ import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 import static org.springframework.http.MediaType.TEXT_PLAIN_VALUE;
 
 @RestController
+@RequestMapping("/appointments")
 public class AppointmentController {
 
-    private final AppointmentService appointmentService;
-
-    public AppointmentController(AppointmentService appointmentService) {
-        this.appointmentService = appointmentService;
-    }
+    @Autowired private AppointmentService appointmentService;
 
     @Operation(summary = "Read appointment")
     @ApiResponse(responseCode = "200", content = @Content(
@@ -43,7 +41,7 @@ public class AppointmentController {
     @ApiResponse(responseCode = "404", content = @Content(
             mediaType = TEXT_PLAIN_VALUE))
     @JsonView(AppointmentViews.FullDataWithId.class)
-    @GetMapping("/appointments/{id}")
+    @GetMapping("/{id}")
     public AppointmentDto readById(@PathVariable Long id) {
         return toDto(appointmentService.readById(id).orElseThrow(EntityNotFoundException::new));
     }
@@ -53,7 +51,7 @@ public class AppointmentController {
             mediaType = APPLICATION_JSON_VALUE,
             array = @ArraySchema(schema = @Schema(implementation = AppointmentDto.class))))
     @JsonView(AppointmentViews.FullDataWithId.class)
-    @GetMapping("/appointments")
+    @GetMapping
     public Collection<AppointmentDto> readAll() {
         return toDtoMany(appointmentService.readAll());
     }
@@ -65,7 +63,7 @@ public class AppointmentController {
     @ApiResponse(responseCode = "422", content = @Content(
             mediaType = TEXT_PLAIN_VALUE))
     @JsonView(AppointmentViews.FullDataWithId.class)
-    @PostMapping("/appointments")
+    @PostMapping
     public AppointmentDto create(
             @JsonView(AppointmentViews.FullDataWithoutId.class)
             @RequestBody AppointmentDto appointmentDto) {
@@ -87,7 +85,7 @@ public class AppointmentController {
     @ApiResponse(responseCode = "422", content = @Content(
             mediaType = TEXT_PLAIN_VALUE))
     @JsonView(AppointmentViews.FullDataWithId.class)
-    @PutMapping("/appointments/{id}")
+    @PutMapping("/{id}")
     public AppointmentDto update(
             @PathVariable Long id,
             @JsonView(AppointmentViews.FullDataWithoutId.class)
@@ -98,7 +96,7 @@ public class AppointmentController {
     }
 
     @Operation(summary = "Delete appointment")
-    @DeleteMapping("/appointments/{id}")
+    @DeleteMapping("/{id}")
     @ResponseStatus(NO_CONTENT)
     public void deleteById(@PathVariable Long id) {
         appointmentService.deleteById(id);
@@ -111,7 +109,7 @@ public class AppointmentController {
     @ApiResponse(responseCode = "404", content = @Content(
             mediaType = TEXT_PLAIN_VALUE))
     @JsonView(DoctorViews.FullDataWithId.class)
-    @GetMapping("/appointments/{id}/doctors")
+    @GetMapping("/{id}/doctors")
     public DoctorDto readDoctorOfAppointment(@PathVariable Long id) {
         Appointment appointment = appointmentService.readById(id).orElseThrow(EntityNotFoundException::new);
         if (appointment.getDoctor() == null) {
@@ -126,7 +124,7 @@ public class AppointmentController {
             mediaType = TEXT_PLAIN_VALUE))
     @ApiResponse(responseCode = "409", content = @Content(
             mediaType = TEXT_PLAIN_VALUE))
-    @PutMapping("/appointments/{appId}/doctors/{docId}")
+    @PutMapping("/{appId}/doctors/{docId}")
     @ResponseStatus(NO_CONTENT)
     public void updateDoctorOfAppointment(@PathVariable Long appId, @PathVariable Long docId) {
         appointmentService.updateDoctorOfAppointment(appId, docId);
@@ -136,7 +134,7 @@ public class AppointmentController {
     @ApiResponse(responseCode = "204")
     @ApiResponse(responseCode = "404", content = @Content(
             mediaType = TEXT_PLAIN_VALUE))
-    @DeleteMapping("/appointments/{id}/doctors")
+    @DeleteMapping("/{id}/doctors")
     @ResponseStatus(NO_CONTENT)
     public void deleteDoctorOfAppointment(@PathVariable Long id) {
         appointmentService.deleteDoctorOfAppointment(id);
@@ -149,7 +147,7 @@ public class AppointmentController {
     @ApiResponse(responseCode = "404", content = @Content(
             mediaType = TEXT_PLAIN_VALUE))
     @JsonView(PatientCaseViews.FullDataWithId.class)
-    @GetMapping("/appointments/{id}/patient_cases")
+    @GetMapping("/{id}/patient_cases")
     public PatientCaseDto readPatientCaseOfAppointment(@PathVariable Long id) {
         Appointment appointment = appointmentService.readById(id).orElseThrow(EntityNotFoundException::new);
         if (appointment.getPatientCase() == null) {

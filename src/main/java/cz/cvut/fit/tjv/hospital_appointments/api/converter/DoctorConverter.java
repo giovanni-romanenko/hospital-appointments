@@ -2,9 +2,12 @@ package cz.cvut.fit.tjv.hospital_appointments.api.converter;
 
 import cz.cvut.fit.tjv.hospital_appointments.api.dto.DoctorDto;
 import cz.cvut.fit.tjv.hospital_appointments.domain.Doctor;
+import lombok.AccessLevel;
+import lombok.NoArgsConstructor;
 
 import java.util.Collection;
 
+@NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class DoctorConverter {
 
     public static Doctor fromDto(DoctorDto dto) {

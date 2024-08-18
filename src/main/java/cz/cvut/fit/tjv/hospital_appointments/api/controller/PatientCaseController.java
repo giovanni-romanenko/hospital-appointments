@@ -18,6 +18,7 @@ import io.swagger.v3.oas.annotations.media.ArraySchema;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Collection;
@@ -28,13 +29,10 @@ import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 import static org.springframework.http.MediaType.TEXT_PLAIN_VALUE;
 
 @RestController
+@RequestMapping("/patient_cases")
 public class PatientCaseController {
 
-    private final PatientCaseService patientCaseService;
-
-    public PatientCaseController(PatientCaseService patientCaseService) {
-        this.patientCaseService = patientCaseService;
-    }
+    @Autowired private PatientCaseService patientCaseService;
 
     @Operation(summary = "Read patient case")
     @ApiResponse(responseCode = "200", content = @Content(
@@ -43,7 +41,7 @@ public class PatientCaseController {
     @ApiResponse(responseCode = "404", content = @Content(
             mediaType = TEXT_PLAIN_VALUE))
     @JsonView(PatientCaseViews.FullDataWithId.class)
-    @GetMapping("/patient_cases/{id}")
+    @GetMapping("/{id}")
     public PatientCaseDto readById(@PathVariable Long id) {
         return toDto(patientCaseService.readById(id).orElseThrow(EntityNotFoundException::new));
     }
@@ -53,7 +51,7 @@ public class PatientCaseController {
             mediaType = APPLICATION_JSON_VALUE,
             array = @ArraySchema(schema = @Schema(implementation = PatientCaseDto.class))))
     @JsonView(PatientCaseViews.FullDataWithId.class)
-    @GetMapping("/patient_cases")
+    @GetMapping
     public Collection<PatientCaseDto> readAll() {
         return toDtoMany(patientCaseService.readAll());
     }
@@ -63,7 +61,7 @@ public class PatientCaseController {
             mediaType = APPLICATION_JSON_VALUE,
             schema = @Schema(implementation = PatientCaseDto.class)))
     @JsonView(PatientCaseViews.FullDataWithId.class)
-    @PostMapping("/patient_cases")
+    @PostMapping
     public PatientCaseDto create(
             @JsonView(PatientCaseViews.FullDataWithoutId.class)
             @RequestBody PatientCaseDto patientCaseDto) {
@@ -81,7 +79,7 @@ public class PatientCaseController {
     @ApiResponse(responseCode = "404", content = @Content(
             mediaType = TEXT_PLAIN_VALUE))
     @JsonView(PatientCaseViews.FullDataWithId.class)
-    @PutMapping("/patient_cases/{id}")
+    @PutMapping("/{id}")
     public PatientCaseDto update(
             @PathVariable Long id,
             @JsonView(PatientCaseViews.FullDataWithoutId.class)
@@ -92,7 +90,7 @@ public class PatientCaseController {
     }
 
     @Operation(summary = "Delete patient case")
-    @DeleteMapping("/patient_cases/{id}")
+    @DeleteMapping("/{id}")
     @ResponseStatus(NO_CONTENT)
     public void deleteById(@PathVariable Long id) {
         patientCaseService.deleteById(id);
@@ -105,7 +103,7 @@ public class PatientCaseController {
     @ApiResponse(responseCode = "404", content = @Content(
             mediaType = TEXT_PLAIN_VALUE))
     @JsonView(DoctorViews.FullDataWithId.class)
-    @GetMapping("/patient_cases/{id}/doctors")
+    @GetMapping("/{id}/doctors")
     public Collection<DoctorDto> readAllDoctorsWhoCanWorkOnPatientCase(@PathVariable Long id) {
         return DoctorConverter.toDtoMany(patientCaseService.readAllDoctorsWhoCanWorkOnPatientCase(id));
     }
@@ -117,7 +115,7 @@ public class PatientCaseController {
     @ApiResponse(responseCode = "404", content = @Content(
             mediaType = TEXT_PLAIN_VALUE))
     @JsonView(AppointmentViews.FullDataWithId.class)
-    @GetMapping("/patient_cases/{id}/appointments")
+    @GetMapping("/{id}/appointments")
     public AppointmentDto readAppointmentOfPatientCase(@PathVariable Long id) {
         PatientCase patientCase = patientCaseService.readById(id).orElseThrow(EntityNotFoundException::new);
         if (patientCase.getAppointment() == null) {
@@ -132,7 +130,7 @@ public class PatientCaseController {
             mediaType = TEXT_PLAIN_VALUE))
     @ApiResponse(responseCode = "409", content = @Content(
             mediaType = TEXT_PLAIN_VALUE))
-    @PutMapping("/patient_cases/{caseId}/appointments/{appId}")
+    @PutMapping("/{caseId}/appointments/{appId}")
     @ResponseStatus(NO_CONTENT)
     public void updateAppointmentOfPatientCase(@PathVariable Long caseId, @PathVariable Long appId) {
         patientCaseService.updateAppointmentOfPatientCase(caseId, appId);
@@ -142,7 +140,7 @@ public class PatientCaseController {
     @ApiResponse(responseCode = "204")
     @ApiResponse(responseCode = "404", content = @Content(
             mediaType = TEXT_PLAIN_VALUE))
-    @DeleteMapping("/patient_cases/{caseId}/appointments/{appId}")
+    @DeleteMapping("/{caseId}/appointments/{appId}")
     @ResponseStatus(NO_CONTENT)
     public void deleteAppointmentOfPatientCase(@PathVariable Long caseId, @PathVariable Long appId) {
         patientCaseService.deleteAppointmentOfPatientCase(caseId, appId);
@@ -152,7 +150,7 @@ public class PatientCaseController {
     @ApiResponse(responseCode = "204")
     @ApiResponse(responseCode = "404", content = @Content(
             mediaType = TEXT_PLAIN_VALUE))
-    @PutMapping("/patient_cases/{caseId}/doctors/{docId}")
+    @PutMapping("/{caseId}/doctors/{docId}")
     @ResponseStatus(NO_CONTENT)
     public void updatePatientCaseCanBeTreatedByDoctor(@PathVariable Long caseId, @PathVariable Long docId) {
         patientCaseService.updatePatientCaseCanBeTreatedByDoctor(caseId, docId);
@@ -164,7 +162,7 @@ public class PatientCaseController {
             mediaType = TEXT_PLAIN_VALUE))
     @ApiResponse(responseCode = "409", content = @Content(
             mediaType = TEXT_PLAIN_VALUE))
-    @DeleteMapping("/patient_cases/{caseId}/doctors/{docId}")
+    @DeleteMapping("/{caseId}/doctors/{docId}")
     @ResponseStatus(NO_CONTENT)
     public void deletePatientCaseCanBeTreatedByDoctor(@PathVariable Long caseId, @PathVariable Long docId) {
         patientCaseService.deletePatientCaseCanBeTreatedByDoctor(caseId, docId);

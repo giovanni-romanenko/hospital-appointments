@@ -1,0 +1,26 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: hospital-appointments
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: hospital-appointments
+  template:
+    metadata:
+      labels:
+        app: hospital-appointments
+    spec:
+      containers:
+        - name: hospital-appointments
+          ports:
+            - containerPort: 8080
+          env:
+            - name: DATABASE_URL
+              value: jdbc:postgresql://postgres:5432/postgres
+            - name: DATABASE_USERNAME
+              value: "username"
+            - name: DATABASE_PASSWORD
+              value: "password"
+          image: cosiska/hospital-appointments:latest
